@@ -1,8 +1,9 @@
-import duckdb
+#import duckdb
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from datetime import datetime
 
 from signal_model import generate_signals
 
@@ -63,12 +64,13 @@ for idx, row in df.iterrows():
     # Entry: Buy
     if row["signal"] == 1.0 and position == 0.0:
         executed_price = price * (1 + slippage)
-        shares = cash // executed_price
-        if shares > 0:
-            cost = shares * executed_price + fee_per_trade
-            cash -= cost
-            position = shares
-            trade_log.append({"timestamp": idx, "type": "BUY",
+        shares = (0.01 * cash) // executed_price
+        if cash > 0.0:
+            if shares > 0:
+                cost = shares * executed_price + fee_per_trade
+                cash -= cost
+                position = shares
+                trade_log.append({"timestamp": idx, "type": "BUY",
                               "price": executed_price, "shares": shares, "cash": cash})
 
     # Exit: Sell
