@@ -63,6 +63,8 @@ daily_df = df.set_index('open_standard').resample('1D').agg({
 }).reset_index()
 
 df = daily_df.set_index('open_standard').dropna()
+#print(df.head())
+df = df[df.index > pd.Timestamp('2023-01-01')]
 
 # -------------------------
 # 2) Strategy: SMA crossover
@@ -93,7 +95,7 @@ for idx, row in df.iterrows():
     # Entry: Buy
     if row["signal"] == 1.0 and position == 0.0:
         executed_price = price * (1 + slippage)
-        shares = (0.01 * cash) // executed_price
+        shares = (.01 * cash) // executed_price
         if cash > 0.0:
             if shares > 0:
                 cost = shares * executed_price + fee_per_trade
@@ -170,3 +172,5 @@ print("Total Return: {:.2%}".format(total_return))
 print("Annualized Return: {:.2%}".format(annualized_return))
 print("Sharpe Ratio:", round(sharpe, 2))
 print("Max Drawdown: {:.2%}".format(max_drawdown))
+#print("header of trades_df: ", df.head())
+#print("Number of Trades:", df.tail())
