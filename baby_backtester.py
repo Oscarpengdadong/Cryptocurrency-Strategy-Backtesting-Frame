@@ -1,9 +1,9 @@
-#import duckdb
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
 from datetime import datetime
+import duckdb
 
 from signal_model import generate_signals
 
@@ -18,6 +18,8 @@ start_price = 100.0
 dates = pd.bdate_range(end=pd.Timestamp.today(), periods=n_days)  # business days
 returns = np.random.normal(loc=0.0002, scale=0.02, size=n_days)   # small drift + noise
 price = start_price * np.exp(np.cumsum(returns))  # geometric random walk
+
+
 
 # Make OHLC
 high = price * (1 + np.abs(np.random.normal(0, 0.003, size=n_days)))
@@ -34,6 +36,35 @@ df = pd.DataFrame({
     "close": close,
     "volume": volume
 }).set_index("timestamp")
+
+
+# connect to your DuckDB file
+conn = duckdb.connect("/Users/xiaohan/Working/trading/crypto/systematic/data/crypto_data_aggregated/binance_merged.db")
+
+query = """
+select *
+from main.ohlcv_1m
+where symbol = 'ETHUSDT'
+"""
+
+df = conn.execute(query).fetchdf()
+df.drop(columns=['open_time', 'close_time'], inplace=True)
+#print(df)
+
+# Set index to open_standard for resampling
+daily_df = df.set_index('open_standard').resample('1D').agg({
+    'open': 'first',
+    'high': 'max',
+    'low': 'min',
+    'close': 'last',
+    'volume': 'sum',
+    'quote_volume': 'sum',
+    'trades': 'sum'
+}).reset_index()
+
+df = daily_df.set_index('open_standard').dropna()
+#print(df.head())
+df = df[df.index > pd.Timestamp('2023-01-01')]
 
 # -------------------------
 # 2) Strategy: SMA crossover
@@ -64,7 +95,7 @@ for idx, row in df.iterrows():
     # Entry: Buy
     if row["signal"] == 1.0 and position == 0.0:
         executed_price = price * (1 + slippage)
-        shares = (0.01 * cash) // executed_price
+        shares = (.01 * cash) // executed_price
         if cash > 0.0:
             if shares > 0:
                 cost = shares * executed_price + fee_per_trade
@@ -141,3 +172,5 @@ print("Total Return: {:.2%}".format(total_return))
 print("Annualized Return: {:.2%}".format(annualized_return))
 print("Sharpe Ratio:", round(sharpe, 2))
 print("Max Drawdown: {:.2%}".format(max_drawdown))
+#print("header of trades_df: ", df.head())
+#print("Number of Trades:", df.tail())
