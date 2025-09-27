@@ -1,13 +1,15 @@
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
 from datetime import datetime
 import duckdb
-
+import time 
 from signal_model import generate_signals
 
-
+start = time.time()
 
 # -------------------------
 # 1) Create synthetic daily OHLCV
@@ -64,7 +66,7 @@ daily_df = df.set_index('open_standard').resample('1D').agg({
 
 df = daily_df.set_index('open_standard').dropna()
 #print(df.head())
-df = df[df.index > pd.Timestamp('2023-01-01')]
+
 
 # -------------------------
 # 2) Strategy: SMA crossover
@@ -174,3 +176,4 @@ print("Sharpe Ratio:", round(sharpe, 2))
 print("Max Drawdown: {:.2%}".format(max_drawdown))
 #print("header of trades_df: ", df.head())
 #print("Number of Trades:", df.tail())
+print("timning:", time.time() - start   )
