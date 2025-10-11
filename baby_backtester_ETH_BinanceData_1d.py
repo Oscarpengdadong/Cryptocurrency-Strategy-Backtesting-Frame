@@ -44,7 +44,7 @@ conn = duckdb.connect("/Users/pengdadong/Downloads/binance_merged.db")
 query = """
 select *
 from main.ohlcv_1m
-where symbol = 'BTCUSDT'
+where symbol = 'ETHUSDT'
 """
 
 df = conn.execute(query).fetchdf()
@@ -64,7 +64,7 @@ daily_df = df.set_index('open_standard').resample('1D').agg({
 
 df = daily_df.set_index('open_standard').dropna()
 #print(df.head())
-df = df[df.index > pd.Timestamp('2018-12-01')]
+df = df[df.index > pd.Timestamp('2018-10-01')]
 
 # -------------------------
 # 2) Strategy: RSI signal
@@ -88,7 +88,7 @@ def compute_rsi(series, period=14):
     rsi = 100 - (100 / (1 + rs))
     return rsi
 
-# compute RSI(14)
+# compute RSI(7)
 df["rsi"] = compute_rsi(df["close"], 7)
 
 # build {-1, 0, 1} indicator
@@ -174,7 +174,7 @@ if not trades_df.empty:
     plt.scatter(sells["timestamp"], sells["price"], marker="v", s=80, label="Sell")
 plt.legend()
 plt.title("Price and Trade Signals")
-plt.savefig(os.path.join(out_dir, "BTC_price_with_signals.png"))
+plt.savefig(os.path.join(out_dir, "ETH_1d__price_with_signals.png"))
 
 # Equity curve
 plt.figure(figsize=(12,6))
@@ -193,7 +193,7 @@ plt.text(0.5, 0.8, f"Max Drawdown: {max_drawdown:.2f}",
          transform=plt.gca().transAxes,   # use axes (0–1) coordinates
          fontsize=10, color='green',
          verticalalignment='top')
-plt.savefig(os.path.join(out_dir, "BTC_equity_curve.png"))
+plt.savefig(os.path.join(out_dir, "ETH_1d_equity_curve.png"))
 
 # RSI curve
 plt.figure(figsize=(12,4))
@@ -202,12 +202,12 @@ plt.axhline(15, color='green', linestyle='--')
 plt.axhline(85, color='red', linestyle='--')
 plt.legend()
 plt.title("RSI")
-plt.savefig(os.path.join(out_dir, "BTC_rsi_curve.png"))
+plt.savefig(os.path.join(out_dir, "ETH_1d_rsi7_curve.png"))
 
 # -------------------------
 # 6) Print Summary
 # -------------------------
-print("Equity Curve:", equity_curve)
+#print("Equity Curve:", equity_curve)
 print("Cash:", cash)
 print(df["rsi"].describe())
 print(df["signal"].value_counts())
