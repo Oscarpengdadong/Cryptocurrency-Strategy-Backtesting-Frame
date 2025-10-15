@@ -1,4 +1,7 @@
 # Cryptocurrency-Strategy-Backtesting-Frame
+
+Author: Xiaohan Wang,  Dadong Peng
+
 Cryptocurrency Strategy + Backtesting Frame targeting on Binance kline data
 
 Investment Target we choose: BTC/USDT, ETH/USDT, 
