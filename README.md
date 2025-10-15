@@ -26,4 +26,5 @@ Next setp on Trading Strategy:
     
   2: build up model based on transformer and kline data + volume data.
     related reference: Kronos: A Foundation Model for the Language of Financial Markets. https://arxiv.org/abs/2508.02739
+    
     This paper use methods of LLM models to tokenize kline data and train model to predict upcoming kline performance. We want to implement this idea on our binance kline data + volume data. The advantage of this method is that we can have a pre-trained model at first step, which provides a solid prototype. Since our crypto targets have history less than 10 years, we can therefore use DPO method to fine-tune Kronos prototype, and make it a good predictor on next several days' kline. 
