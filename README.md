@@ -7,6 +7,7 @@ Cryptocurrency Strategy + Backtesting Frame targeting on Binance kline data
 Investment Target we choose: BTC/USDT, ETH/USDT, 
 
 Time Frame we use: 1 hour, 1 day
+
   reason: We tried aggregation data on 1 min and 5 min, but there's no enough trades in each time peroid. We also tried aggregation data on 1 week, but there's no enough data points since Binance data starts after 2017 or even later years.  
 
 Trading Strategy we use: 
@@ -22,6 +23,7 @@ Visulization:
   It's explained in each strategy.py
 
 Next setp on Trading Strategy:
+
   1: build up model based on Gradient-Boosted Decision Trees (GBDT) and kline data.
     related reference: https://c3.ai/glossary/data-science/gradient-boosted-decision-trees-gbdt/#:~:text=Gradient%2Dboosted%20decision%20trees%20are%20a%20popular%20method%20for%20solving,to%20a%20sufficiently%20optimal%20solution.
     
